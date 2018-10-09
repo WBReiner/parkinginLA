@@ -1,0 +1,78 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <style>
+        .select {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+            width: 100%;
+        }    .select select {
+                font-family: 'Arial';
+                display: inline-block;
+                width: 100%;
+                cursor: pointer;
+                padding: 11px 30px;
+                outline: 0;
+                border: 0px solid #000000;
+                border-radius: 49px;
+                background: #000000;
+                color: #ffffff;
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+            }
+                .select select::-ms-expand {
+                    display: none;
+                }
+                .select select:hover,
+                .select select:focus {
+                    color: #000000;
+                    background: #ffffff;
+                }
+                .select select:disabled {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+        .select_arrow {
+            position: absolute;
+            top: 15px;
+            right: 18px;
+            width: 0px;
+            height: 0px;
+            border: solid #0bf19c;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+        .select select:hover ~ .select_arrow,
+        .select select:focus ~ .select_arrow {
+            border-color: #000000;
+        }
+        .select select:disabled ~ .select_arrow {
+            border-top-color: #cccccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="select">
+        <select>
+            <option>--Select--</option>
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+            <option>Saturday</option>
+            <option>Sunday</option>
+        </select>
+        <div class="select_arrow">
+        </div>
+    </div>
+</body>
+
+</html>

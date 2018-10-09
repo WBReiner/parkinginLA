@@ -1,0 +1,73 @@
+<html>
+  <head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" /> <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+    <title>sāfespace</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, 'sans-serif';
+        background-color: #2b2b2b;
+        margin-top: 20px;
+      }
+.main {
+ background-color: rgba(255, 255, 255, 0.5);
+ margin-top: 100px;
+ padding-bottom: 50px;
+ }
+ .main h1 {
+ font-size: 3.5em;
+ font-family: Raleway;
+ color: #67c1d5;
+ }
+ .ui.header.mylogo {
+ font-family: 'Comfortaa', cursive;
+ color: #67c1d5;
+ font-size: 45px;
+ }
+ .main h2 {
+ font-size: 2em;
+ font-family: Arial;
+ color: #fff;
+ }
+ .main h3 {
+ font-size: 2em;
+ font-family: Arial;
+ color: #2E3759;
+ }
+ .main p {
+ font-size:1em;
+ font-family: Arial;
+ color: #2E3759;
+ }
+.main h4 {
+ font-size: 30px;
+ font-family: Arial;
+ color: #FFF;
+ }
+    </style>
+</head>
+  <body>
+  <div class="ui container">
+      <h1 class="ui inverted header mylogo">
+      sāfespace
+      </h1>
+      {% if not calc %}
+      <div style="color:white;">Sorry, there is not enough data to predict parking violation-risk in your specific location. Try to enter a nearby area. Sāfespace only returns risk when the data is available.</div>
+      {% endif %}
+      {% for risk_level in calc %}
+      <table class="risk-level ui inverted grey table">
+      <thead><tr><th class="three wide">Time of Risk</th><th class="seven wide">Risk Level</th><th class="four wide">Parking Violation Type</th><th class="two wide">Day</th></tr></thead>
+      {% for data in risk_level %}
+      <tr>
+      {% for item in data %}
+      <td>{{item}}</td>
+      {% endfor %}
+      </tr>
+      {% endfor %}
+      </table>
+      {% endfor %}
+  </div>
+  </body>
+</html>
+
+

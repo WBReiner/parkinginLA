@@ -1,0 +1,114 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" /> <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+<title>sāfespace</title>
+<style>
+      body {
+        font-family: Helvetica, Arial, 'sans-serif';
+        background-color: #2b2b2b;
+        margin-top: 20px;
+      }
+      
+ .ui.header.mylogo {
+ font-family: 'Comfortaa', cursive;
+ color: #67c1d5;
+ font-size: 45px;
+ }
+  #map {
+            width: 100%;
+            height: 500px;
+          }
+</style
+ 
+
+</head>
+<body>
+<div class="ui container">
+<h1 class="ui header mylogo inverted">sāfespace</h1>
+         <h2 style="color:#FFF; font-size:125%;">Click the map to set your location.</h2>
+
+        <div class="ui inverted segment"> <form method="post" class="ui inverted form" style="color:#FFF; font-size:125%;">
+            <div class="three fields">
+               <div class="field">
+            <label>Latitude
+              <input id="lat"  name="lat"  style="margin-top:16px;, width:150px"/>
+            </label>
+            </div>
+            <div class="field">
+            <label>Longitude
+            <input id="long"  name="long"  style="margin-top:16px;, width:150px"/>
+            </label>
+            </div>
+            <div class="field">
+            <label>Select a day
+            <select name="weekday" class="ui simple dropdown item" style="margin-top:16px;, width:150px">
+            <option value="All days">All days</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+            </select>
+            </label>
+            </div>
+            </div>
+            <input type="submit" value="Submit" class="ui submit button" />
+        </form>
+        </div>
+
+ 
+         <div id="map" width="500" height="500"></div>
+    <script>
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 34.0577, lng: -118.30781},
+          zoom: 12
+        });
+
+        map.addListener('center_changed', function() {
+          document.getElementById("lat").value = map.getCenter().lat();
+          document.getElementById("long").value = map.getCenter().lng();
+        });
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            document.getElementById("lat").value = pos.lat;
+            document.getElementById("long").value = pos.lng;
+
+            
+            
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent;
+        infoWindow.open(map);
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap">
+    </script>
+</div>
+</body>
+</html>
+
+
+
