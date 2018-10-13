@@ -1,7 +1,8 @@
 import numpy as np
 import os
+import requests
 import predict
-from flask import Flask, session, redirect, url_for, escape, request, render_template
+from flask import Flask, session, redirect, url_for, escape, request, render_template, jsonify
 from string import Template
 import psycopg2
 import urllib.parse as urlparse
@@ -62,8 +63,9 @@ def cluster_id(lat,long,wday):
 def index():
     if request.method == 'POST':
     	lat = request.form['lat']
-    	long = request.form['long']
+    	long = request.form['lng']
     	wday = request.form['weekday']
+    	print(lat, long, wday)
     	lat = float(lat)
     	long = float(long)
     	#returns finalanswer
@@ -73,6 +75,13 @@ def index():
     	return render_template('results.html', lat=lat, long=long, calc=calc, wday=wday)
     key=os.environ['API_KEY']
     return render_template('savedhtml.html',key=key)
+    
+@app.route('/geocode', methods = ['POST'])
+def geocode():
+    address = request.get_json()['address']
+    bounds = request.get_json()['bounds']
+    r = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}&bounds={}&key={}'.format(address, bounds, os.environ['API_KEY']))
+    return jsonify(r.text)
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)

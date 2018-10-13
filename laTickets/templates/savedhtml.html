@@ -1,6 +1,9 @@
 <html>
 <head>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" /> <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
 <title>sāfespace</title>
 <style>
@@ -19,6 +22,10 @@
             width: 100%;
             height: 500px;
           }
+  .hide-element {
+    display: none!important;
+  }
+
 </style
  
 
@@ -26,24 +33,22 @@
 <body>
 <div class="ui container">
 <h1 class="ui header mylogo inverted">sāfespace</h1>
-         <h2 style="color:#FFF; font-size:125%;">Click the map to set your location.</h2>
+         
 
-        <div class="ui inverted segment"> <form method="post" class="ui inverted form" style="color:#FFF; font-size:125%;">
-            <div class="three fields">
-               <div class="field">
-            <label>Latitude
-              <input id="lat"  name="lat"  style="margin-top:16px;, width:150px"/>
-            </label>
-            </div>
+        <div class="ui inverted segment"> <div class="ui inverted form" style="color:#FFF; font-size:125%;">
+            <div class="two fields">
+              <div class="field" >
+              
+               <div class="ui action input" style="margin-top:30px;">
+
+                  <input id="address" placeholder="Enter an LA address" />
+                  <button class="ui button" id="address-search" onclick="handleSearch()" >Search</button>
+
+                </div>
+                </div>
             <div class="field">
-            <label>Longitude
-            <input id="long"  name="long"  style="margin-top:16px;, width:150px"/>
-            </label>
-            </div>
-            <div class="field">
-            <label>Select a day
-            <select name="weekday" class="ui simple dropdown item" style="margin-top:16px;, width:150px">
-            <option value="All days">All days</option>
+            <select id="weekday" onchange="handleSelect()" name="weekday" class="ui simple dropdown item" style="margin-top:31px; height: 45px; font-size:19px; width:30%; min-width: 300px;">
+            <option value="All days">Select a day</option>
             <option value="Monday">Monday</option>
             <option value="Tuesday">Tuesday</option>
             <option value="Wednesday">Wednesday</option>
@@ -52,11 +57,22 @@
             <option value="Saturday">Saturday</option>
             <option value="Sunday">Sunday</option>
             </select>
-            </label>
             </div>
             </div>
-            <input type="submit" value="Submit" class="ui submit button" />
-        </form>
+            <form action="/" class="ui form" method="POST">
+            <div class="ui labeled button hide-element" id='address-submit' tabindex="0">
+              <div class="ui button" id="round-boy" onclick="javascript:document.forms[0].submit();">
+                <i class="map marker icon"></i> <span id="address-search-text">Search at this location</span>
+              </div>
+              <input type="hidden" id="lat-input" name="lat" >
+              <input type="hidden" id="lng-input" name="lng" >
+              <input type="hidden" id="weekday-input" name="weekday" value="All days" >
+
+              <a class="ui basic label" id="address-label">
+              </a>
+            </div>
+            </form>
+        </div>
         </div>
 
  
@@ -68,10 +84,26 @@
           center: {lat: 34.0577, lng: -118.30781},
           zoom: 12
         });
+        
+        map.addListener('dblclick', handleChangeLoc)
+        map.addListener('dragend', handleChangeLoc)
 
         map.addListener('center_changed', function() {
-          document.getElementById("lat").value = map.getCenter().lat();
-          document.getElementById("long").value = map.getCenter().lng();
+          document.getElementById('lat-input').value = map.getCenter().lat();
+          document.getElementById('lng-input').value = map.getCenter().lng();
+        });
+        
+        function handleChangeLoc() {
+            document.getElementById('address').value = ''
+            document.getElementById('round-boy').style = 'border-radius: 4px;'
+          document.getElementById('address-submit').className = 'ui labeled button';
+         document.getElementById('address-label').style = 'display:none;';
+          document.getElementById('address-search-text').innerHTML = 'Search where map is currently centered';
+        }
+        
+        map.addListener('bounds_changed', function() {
+           // send the new bounds back to your server
+           console.log("map bounds{"+map.getBounds());
         });
 
         // Try HTML5 geolocation.
@@ -82,10 +114,8 @@
               lng: position.coords.longitude
             };
 
-            document.getElementById("lat").value = pos.lat;
-            document.getElementById("long").value = pos.lng;
-
-            
+            document.getElementById('lat-input').value = position.coords.latitude;
+            document.getElementById('lng-input').value = position.coords.longitude;
             
             map.setCenter(pos);
           }, function() {
@@ -101,6 +131,48 @@
         infoWindow.setPosition(pos);
         infoWindow.setContent;
         infoWindow.open(map);
+      }
+      const handleSelect = () => {
+        const weekday = document.getElementById('weekday').value
+        document.getElementById('weekday-input').value = weekday
+      }
+      const handleSearch = () => {
+        document.getElementById('round-boy').style = '';
+
+        document.getElementById('address-label').style = 'display:initial;';
+          document.getElementById('address-search-text').innerHTML = 'Search at this location';
+        document.getElementById('address-search').className = 'ui button loading'
+        const address = document.getElementById('address').value;
+        const bounds = '33.71812512038069,-118.89557187874578|34.28735720311316,-117.61429136116766'
+
+        axios.post('/geocode', {address, bounds})
+        .then(response => {
+          document.getElementById('address').value = ''
+          document.getElementById('address-search').className = 'ui button'
+          const data = JSON.parse(response.data)
+          const address = data.results[0].formatted_address;
+          document.getElementById('address-label').innerText = address;
+          document.getElementById('address-submit').className = 'ui labeled button';
+          console.log(data)
+          const lat = data.results[0].geometry.location.lat;
+          const lng = data.results[0].geometry.location.lng;
+          window.lat = lat;
+          window.lng = lng;
+          const pos = {
+              lat: lat,
+              lng: lng,
+            };
+            document.getElementById('lat-input').value = lat;
+            document.getElementById('lng-input').value = lng;
+
+            map.setCenter(pos);
+            map.setZoom(16)
+        })
+      }
+      const submitAddress = () => {
+        const weekday = document.getElementById('weekday').value
+        axios.post('/', {lat: lat, lng: lng, weekday: weekday })
+        
       }
     </script>
     <script async defer
