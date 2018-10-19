@@ -7,7 +7,7 @@ import psycopg2
 # Define a database name
 # Set your postgres username
 dbname = 'postgres'
-username = 'whitneyreiner' # change this to your username
+username = '' # change this to your username
 
 
 ## 'engine' is a connection to a database
